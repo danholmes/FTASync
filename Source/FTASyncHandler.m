@@ -628,7 +628,18 @@
 
     PFQuery *query = [PFQuery queryWithClassName:[entityDesc name]];
     [query whereKey:@"objectId" containedIn:objectIds];
-    NSArray *parseObjects = [query findObjects];
+    
+    query.limit = self.queryLimit;
+    query.skip = 0;
+    
+    NSMutableArray *parseObjects = [NSMutableArray array];
+    NSArray *queryResults;
+    
+    do {
+        queryResults = [query findObjects];
+        [parseObjects addObjectsFromArray:queryResults];
+        query.skip += query.limit;
+    } while (queryResults.count == query.limit);
 
     NSMutableArray *existingObjectIds = [@[] mutableCopy];
     for (PFObject *parseObject in parseObjects) {
