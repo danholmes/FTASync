@@ -17,7 +17,8 @@
 
 - (BOOL)canSync;
 
-- (NSArray *)getObjectsOfClass:(NSString *)className updatedSince:(NSDate *)lastUpdate error:(NSError **)error;
+- (NSArray *)getObjectsOfClass:(NSString *)className updatedSince:(NSDate *)lastUpdate skip:(NSUInteger)skip error:(NSError **)error;
+- (NSArray *)getObjectsOfClass:(NSString *)className updatedSince:(NSDate *)lastUpdate skip:(NSUInteger)skip;
 - (NSArray *)getObjectsOfClass:(NSString *)className updatedSince:(NSDate *)lastUpdate;
 - (BOOL)putUpdatedObjects:(NSArray *)updatedObjects forClass:(NSEntityDescription *)entityDesc error:(NSError **)error;
 

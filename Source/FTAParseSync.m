@@ -45,9 +45,10 @@
     return YES;
 }
 
-- (NSArray *)getObjectsOfClass:(NSString *)className updatedSince:(NSDate *)lastUpdate error:(NSError **)error {
+- (NSArray *)getObjectsOfClass:(NSString *)className updatedSince:(NSDate *)lastUpdate skip:(NSUInteger)skip error:(NSError **)error {
     PFQuery *query = [PFQuery queryWithClassName:className];
     query.limit = [[FTASyncHandler sharedInstance] queryLimit];
+    query.skip = skip;
     //Cache the query in case we need one of the objects for merging later
     query.cachePolicy = kPFCachePolicyNetworkOnly;
     
@@ -57,7 +58,6 @@
     [query orderBySortDescriptor:[NSSortDescriptor sortDescriptorWithKey:@"updatedAt" ascending:YES]];
 
     NSArray *returnObjects = [query findObjects:error];
-    NSLog(@"returnObjects: %@ %@", returnObjects, className);
     if (!*error) {
         [[FTASyncHandler sharedInstance] setReceivedPFObjects:returnObjects entityName:className];
     }
@@ -65,8 +65,12 @@
     return returnObjects;
 }
 
+- (NSArray *)getObjectsOfClass:(NSString *)className updatedSince:(NSDate *)lastUpdate skip:(NSUInteger)skip {
+    return [self getObjectsOfClass:className updatedSince:lastUpdate skip:skip error:nil];
+}
+
 - (NSArray *)getObjectsOfClass:(NSString *)className updatedSince:(NSDate *)lastUpdate {
-    return [self getObjectsOfClass:className updatedSince:lastUpdate error:nil];
+    return [self getObjectsOfClass:className updatedSince:lastUpdate skip:0 error:nil];
 }
 
 - (BOOL)putUpdatedObjects:(NSArray *)updatedObjects forClass:(NSEntityDescription *)entityDesc error:(NSError **)error {

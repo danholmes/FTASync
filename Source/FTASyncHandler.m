@@ -52,7 +52,7 @@
     dispatch_once(&pred, ^{
         shared = [[FTASyncHandler alloc] init];
         [[NSNotificationCenter defaultCenter] addObserver:shared selector:@selector(contextWasSaved:) name:NSManagedObjectContextDidSaveNotification object:[NSManagedObjectContext MR_defaultContext]];
-        shared.queryLimit = 10;
+        shared.queryLimit = 1000;
         shared.receivedPFObjectDictionary = @{};
     });
 
@@ -173,6 +173,10 @@
 }
 
 - (BOOL)syncEntity:(NSEntityDescription *)entityDesc {
+    return [self syncEntity:entityDesc skip:0];
+}
+
+- (BOOL)syncEntity:(NSEntityDescription *)entityDesc skip:(NSUInteger)skip {
     if ([NSThread isMainThread]) {
         FSALog(@"%@", @"This should NEVER be run on the main thread!!");
         return NO;
@@ -206,8 +210,6 @@
         if ([newLocalObjects count] > 0) {
             [objectsToSync addObjectsFromArray:newLocalObjects];
         }
-        
-        
     }
 
     //Get the time of the most recently sync'd object
@@ -216,10 +218,19 @@
 
     //Get updated remote objects
     NSError *error = nil;
-    NSMutableArray *remoteObjectsForSync = [[self.remoteInterface getObjectsOfClass:[entityDesc name]
-                                                                       updatedSince:lastUpdate
-                                                                              error:&error] mutableCopy];
-
+    
+    NSMutableArray *remoteObjectsForSync = [NSMutableArray array];
+    
+    NSMutableArray *queryResults;
+    do {
+        queryResults = [[self.remoteInterface getObjectsOfClass:[entityDesc name]
+                                                   updatedSince:lastUpdate
+                                                           skip:skip
+                                                          error:&error] mutableCopy];
+        [remoteObjectsForSync addObjectsFromArray:queryResults];
+        skip += FTASyncHandler.sharedInstance.queryLimit;
+    } while (error == nil && queryResults.count == FTASyncHandler.sharedInstance.queryLimit);
+    
     if (error) {
         FSALog(@"Cannot get objects from parse server (error: %@)", [error description]);
         return NO;
