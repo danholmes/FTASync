@@ -645,7 +645,7 @@
     if ([[UIDevice currentDevice] isMultitaskingSupported]) {
       //Create a background task identifier and specify the exception handler
       bgTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        NSLog(@"Background sync on exit failed to complete in time limit");
+        FSLog(@"Background sync on exit failed to complete in time limit");
         //TODO: This is the wrong context since this code will be running on main thread. Is there a way to get
         //   access to the context running [self syncAll] below??
         [[NSManagedObjectContext MR_contextForCurrentThread] rollback];

@@ -19,7 +19,7 @@
 
 #ifndef FS_ENABLE_SYNC_LOGGING
   #ifdef DEBUG
-    #define FS_ENABLE_SYNC_LOGGING 1
+    #define FS_ENABLE_SYNC_LOGGING 0
   #else
     #define FS_ENABLE_SYNC_LOGGING 0
   #endif

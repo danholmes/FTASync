@@ -103,8 +103,8 @@
   }@catch (NSException *exception) {
     // if nsdata is uiimage, exception occurred.
     unarchiveObject = nil;
-    NSLog(@"unarchive exception name  :%@",exception.name);
-    NSLog(@"unarchive exception reason:%@",exception.reason);
+    FSLog(@"unarchive exception name  :%@",exception.name);
+    FSLog(@"unarchive exception reason:%@",exception.reason);
   }
   if ([[unarchiveObject class] isSubclassOfClass:[NSURL class]]) {
     return unarchiveObject;
@@ -387,8 +387,8 @@
             }@catch (NSException *exception) {
                 // if nsdata is uiimage, exception occurred.
                 unarchiveObject = nil;
-                NSLog(@"unarchive exception name  :%@",exception.name);
-                NSLog(@"unarchive exception reason:%@",exception.reason);
+                FSLog(@"unarchive exception name  :%@",exception.name);
+                FSLog(@"unarchive exception reason:%@",exception.reason);
             }
             if ([unarchiveObject isKindOfClass:[NSArray class]]){
                 [parseObject setObject:unarchiveObject forKey:attribute];
@@ -638,10 +638,10 @@
             }
         }
         else {
-          NSLog(@"relation ship!");
+          FSLog(@"relation ship!");
             //To-one relationship
             PFObject *relatedRemoteObject = [parseObject objectForKey:relationship];
-          NSLog(@"parseObject: %@", relatedRemoteObject);
+          FSLog(@"parseObject: %@", relatedRemoteObject);
             FTASyncParent *localRelatedObject = [FTASyncParent FTA_localObjectForClass:destEntity WithRemoteId:relatedRemoteObject.objectId WithContext:context];
             FTASyncParent *currentLocalRelatedObject = [self valueForKey:relationship];
             
@@ -671,7 +671,6 @@
     
     if (self.syncStatusValue == 2) {
         //This is a new object from remote so reset syncStatus
-      NSLog(@"sync new object!");
         [self FTA_updateObjectMetadataWithRemoteObject:parseObject andResetSyncStatus:YES];
     }
     else {
@@ -683,7 +682,6 @@
 
 - (void)FTA_updateObjectMetadataWithRemoteObject:(PFObject *)parseObject andResetSyncStatus:(BOOL)resetStatus {
     if (!self.objectId) {
-      NSLog(@"set!!! %@", parseObject.objectId);
         self.objectId = parseObject.objectId;
     }
     else if (![[self valueForKey:@"objectId"] isEqualToString:parseObject.objectId]) {
