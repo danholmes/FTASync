@@ -259,11 +259,13 @@
     
     if (self.syncStatusValue == 2 || self.syncStatusValue == 3) {
         FSLog(@"Parent object is new");
-        return NO;
+        //return NO; //for single relation from parse
+        return YES;
     }
     else if([localObject.objectId isEqualToString:remoteObject.objectId]) {
         FSLog(@"Related objects match");
-        return NO;
+        //return NO; //for single relation from parse
+        return YES;
     }
     else if((localObject != nil && localObject.syncStatus == nil) || localObject.syncStatusValue == 2 || localObject.syncStatusValue ==3) {
         //Related object is new locally
@@ -394,6 +396,9 @@
                 [parseObject setObject:unarchiveObject forKey:attribute];
                 continue;
             }
+            if ([unarchiveObject isKindOfClass:[NSURL class]]){
+              continue;
+            }
             NSString *fileName = nil;
             if (parseObject.objectId) {
                 fileName = [NSString stringWithFormat:@"%@-%@", parseObject.objectId, attribute];
@@ -426,6 +431,9 @@
         return;
     }
     for (NSString *relationship in relationships) {
+        if (![self hasFaultForRelationshipNamed:relationship]) {
+            continue;
+        }
         NSObject *value = [self valueForKey:relationship];
         
         NSRelationshipDescription *relationshipDescription = [relationships objectForKey:relationship];
@@ -664,7 +672,7 @@
             else if(![self shouldUseRemoteObject:relatedRemoteObject insteadOfLocal:currentLocalRelatedObject forToMany:NO relationship:relationship]) {
                 continue;
             }
-            
+          
             [self setValue:localRelatedObject forKey:relationship];
         }
     }
