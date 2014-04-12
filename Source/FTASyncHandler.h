@@ -36,6 +36,8 @@ typedef void (^FTABoolCompletionBlock)(BOOL success, NSError* error);
 - (NSArray *) receivedPFObjects:(NSString *) entityName;
 - (void) setReceivedPFObjects:(NSArray *)receivedPFObjects entityName:(NSString *) entityName;
 
+- (void)syncEntities:(NSDictionary *)entityNames withCompletionBlock:(FTABoolCompletionBlock)completion progressBlock:(FTASyncProgressBlock)progress;
+
 - (void)syncWithCompletionBlock:(FTABoolCompletionBlock)completion progressBlock:(FTASyncProgressBlock)progress;
 
 - (void)resetAllSyncStatusAndDeleteRemote:(BOOL)delete withCompletionBlock:(FTABoolCompletionBlock)completion progressBlock:(FTASyncProgressBlock)progress;

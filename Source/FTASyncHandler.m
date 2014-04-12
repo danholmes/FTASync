@@ -20,6 +20,7 @@
 
 @interface FTASyncHandler ()
 
+@property (strong, nonatomic) NSDictionary *entityNamesToSync;
 @property (strong, nonatomic) FTAParseSync *remoteInterface;
 @property (atomic) float progress;
 @property (atomic, copy) FTASyncProgressBlock progressBlock;
@@ -169,7 +170,19 @@
 
 
 - (NSArray *)entitiesToSync {
-    return [FTASyncParent allDescendants];
+    if (!self.entityNamesToSync) {
+        return [FTASyncParent allDescendants];
+    }
+    
+    NSMutableArray *ret = [NSMutableArray new];
+
+    for (NSEntityDescription *entity in [FTASyncParent allDescendants]) {
+        if (self.entityNamesToSync[entity.managedObjectClassName]) {
+            [ret addObject:entity];
+        }
+    }
+    
+    return ret;
 }
 
 - (BOOL)syncEntity:(NSEntityDescription *)entityDesc {
@@ -395,6 +408,19 @@
     return YES;
 }
 
+- (void)syncEntities:(NSDictionary *)entityNames withCompletionBlock:(FTABoolCompletionBlock)completion progressBlock:(FTASyncProgressBlock)progress {
+    if (self.entityNamesToSync) {
+        if (completion)
+            completion(NO, nil);
+        
+        return;
+    }
+
+    self.entityNamesToSync = entityNames;
+
+    [self syncWithCompletionBlock:completion progressBlock:progress];
+}
+
 - (void)syncWithCompletionBlock:(FTABoolCompletionBlock)completion progressBlock:(FTASyncProgressBlock)progress {
     //Quick sanity check to fail early if a sync is in progress, or cannot be completed
     if (![self.remoteInterface canSync] || self.syncInProgress) {
@@ -450,6 +476,7 @@
         self.syncInProgress = NO;
         self.progressBlock = nil;
         self.progress = 0;
+        self.entityNamesToSync = nil;
 
         //Use this notification and user defaults key to update an "Last Updated" message in the UI
         [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"FTASyncLastSyncDate"];
