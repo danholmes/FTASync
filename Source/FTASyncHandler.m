@@ -80,6 +80,10 @@
   self.receivedPFObjectDictionary = dic;
 }
 
+- (NSString *)entitySyncCompletedNotificationNameForEntityName:(NSString *)entityName {
+    return [@"FTA_syncCompletedForEntityName:" stringByAppendingString:entityName];
+}
+
 #pragma mark - CoreData Maintenance
 
 - (void)contextWasSaved:(NSNotification *)notification {
@@ -389,6 +393,9 @@
         self.progress += increment;
         if (self.progressBlock)
             self.progressBlock(self.progress, [NSString stringWithFormat:@"Finished sync of %@", [anEntity name]]);
+        
+        NSString *notificationName = [self entitySyncCompletedNotificationNameForEntityName:[anEntity name]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self];
     }
 
     //Since there is no rollback on the metadata this must not be cleared out until we know a full sync was successful
