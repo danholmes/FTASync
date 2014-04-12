@@ -58,6 +58,7 @@
     [query orderBySortDescriptor:[NSSortDescriptor sortDescriptorWithKey:@"updatedAt" ascending:YES]];
 
     NSArray *returnObjects = [query findObjects:error];
+    NSLog(@"%s [%d]: (%p) == NETWORK REQUEST ==", __PRETTY_FUNCTION__, __LINE__, self);
     if (!*error) {
         [[FTASyncHandler sharedInstance] setReceivedPFObjects:returnObjects entityName:className];
     }
@@ -111,7 +112,14 @@
     
     //Update objects on remote
     FSLog(@"Sending objects to Parse: %@", updatedParseObjects);
-    BOOL success = [PFObject saveAll:updatedParseObjects error:error];
+    BOOL success;
+    if (updatedParseObjects.count < 1) {
+        success = YES;
+    }
+    else {
+        success = [PFObject saveAll:updatedParseObjects error:error];
+        NSLog(@"%s [%d]: (%p) == NETWORK REQUEST ==", __PRETTY_FUNCTION__, __LINE__, self);
+    }
     if (!success) {
         FSLog(@"saveAll failed with:");
         return NO;
