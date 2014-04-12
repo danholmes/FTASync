@@ -409,7 +409,7 @@
             
             PFFile *file = [PFFile fileWithName:fileName data:(NSData *)value];
             [file save];
-            NSLog(@"%s [%d]: (%p) == NETWORK REQUEST ==", __PRETTY_FUNCTION__, __LINE__, self);
+            LOG_NETWORK_REQUEST()
             [parseObject setObject:file forKey:attribute];
             
             continue;
@@ -573,7 +573,7 @@
                 PFQuery *query = [relation query];
                 
                 relatedRemoteObjects = [NSMutableArray arrayWithArray:[query findObjects]];
-                NSLog(@"%s [%d]: (%p) == NETWORK REQUEST ==", __PRETTY_FUNCTION__, __LINE__, self);
+                LOG_NETWORK_REQUEST()
                 
             } else {
                 relatedRemoteObjects = [NSMutableArray arrayWithArray:[parseObject objectForKey:relationship]];

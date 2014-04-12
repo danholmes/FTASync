@@ -35,6 +35,10 @@
   #define FSALog(...) NSLog(@"%s [%d]: (%p) %@", __PRETTY_FUNCTION__, __LINE__, self, [NSString stringWithFormat:__VA_ARGS__])
 #endif
 
+#ifndef LOG_NETWORK_REQUEST
+    #define LOG_NETWORK_REQUEST() NSLog(@"%s [%d]: (%p) == NETWORK REQUEST ==", __PRETTY_FUNCTION__, __LINE__, self);
+#endif
+
 #import "FTASyncParent.h"
 #import "FTAParseSync.h"
 #import "FTASyncHandler.h"

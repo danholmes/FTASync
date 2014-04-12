@@ -541,7 +541,7 @@
         PFQuery *query = [PFQuery queryWithClassName:anEntity.name];
         NSError *error = nil;
         NSArray *allRemoteObjects = [query findObjects:&error];
-        NSLog(@"%s [%d]: (%p) == NETWORK REQUEST ==", __PRETTY_FUNCTION__, __LINE__, self);
+        LOG_NETWORK_REQUEST()
         if (error) {
             MRLog(@"Query for all remote objects failed with: %@", error);
             [context rollback];
@@ -676,7 +676,7 @@
     
     do {
         queryResults = [query findObjects];
-        NSLog(@"%s [%d]: (%p) == NETWORK REQUEST ==", __PRETTY_FUNCTION__, __LINE__, self);
+        LOG_NETWORK_REQUEST()
         [parseObjects addObjectsFromArray:queryResults];
         query.skip += query.limit;
     } while (queryResults.count == query.limit);
