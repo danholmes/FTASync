@@ -724,6 +724,16 @@
         FTASyncParent *localObject = [newLocalObjects objectForKey:newRemoteObject.objectId];
         [localObject updateObjectWithRemoteObject:newRemoteObject];
     }
+    
+    //Call the new object was created method if the class responds to it
+    for (FTASyncParent *newObject in newLocalObjects.allValues) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+        if ([newObject respondsToSelector:@selector(newObjectWasCreated:)]) {
+            [newObject performSelector:@selector(newObjectWasCreated:) withObject:newObject];
+#pragma clang diagnostic pop
+        }
+    }
 }
 
 + (void)FTA_updateObjectsForClass:(NSEntityDescription *)entityDesc withRemoteObjects:(NSArray *)parseObjects {
