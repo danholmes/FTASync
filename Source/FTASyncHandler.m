@@ -431,8 +431,9 @@
 - (void)syncWithCompletionBlock:(FTABoolCompletionBlock)completion progressBlock:(FTASyncProgressBlock)progress {
     //Quick sanity check to fail early if a sync is in progress, or cannot be completed
     if (![self.remoteInterface canSync] || self.syncInProgress) {
-        if (completion)
+        if (completion) {
             completion(NO, nil);
+        }
 
         return;
     }
@@ -469,7 +470,9 @@
     } completion:^(BOOL success, NSError *error) {
         if (!syncAllResult) {
             self.syncInProgress = NO;
-            completion(NO, error);
+            if (completion) {
+                completion(NO, error);
+            }
             return;
         }
 
