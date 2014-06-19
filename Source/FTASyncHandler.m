@@ -257,9 +257,11 @@
 
     FSLog(@"Number of remote objects: %i %@", [remoteObjectsForSync count], remoteObjectsForSync);
 #ifdef DEBUG
+#pragma clang diagnostic ignored "-Wunused-variable"
     for (PFObject *object in remoteObjectsForSync) {
         FSLog(@"%@", object.updatedAt);
     }
+#pragma clang diagnostic pop
 #endif
 
     NSArray *deletedLocalObjects;
